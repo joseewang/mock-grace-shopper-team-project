@@ -1,7 +1,8 @@
-const router = require('express').Router()
-const { models: { User }} = require('../db')
-module.exports = router
+const router = require('express').Router();
+const { models: { User }} = require('../db');
+module.exports = router;
 
+//GET /api/users
 router.get('/', async (req, res, next) => {
   try {
     const users = await User.findAll({
@@ -11,7 +12,17 @@ router.get('/', async (req, res, next) => {
       attributes: ['id', 'username']
     })
     res.json(users)
-  } catch (err) {
-    next(err)
+  } catch (error) {
+    next(error);
   }
-})
+});
+
+// //GET /api/users/:id
+// router.get('/:id', async (req, res, next) => {
+//   try {
+//     const user = await User.findByPk(req.params.id);
+//     res.json(user);
+//   } catch (error) {
+//     next(error);
+//   };
+// });
