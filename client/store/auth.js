@@ -1,5 +1,6 @@
 import axios from 'axios'
 import history from '../history'
+import { setCart } from './cart';
 
 const TOKEN = 'token'
 
@@ -11,7 +12,7 @@ const SET_AUTH = 'SET_AUTH'
 /**
  * ACTION CREATORS
  */
-const setAuth = auth => ({type: SET_AUTH, auth})
+const setAuth = auth => ({ type: SET_AUTH, auth })
 
 /**
  * THUNK CREATORS
@@ -24,17 +25,19 @@ export const me = () => async dispatch => {
         authorization: token
       }
     })
-    return dispatch(setAuth(res.data))
+    dispatch(setAuth(res.data.user))
+    dispatch(setCart(res.data.cart))
+    return
   }
 }
 
 export const authenticate = (username, password, method) => async dispatch => {
   try {
-    const res = await axios.post(`/auth/${method}`, {username, password})
+    const res = await axios.post(`/auth/${method}`, { username, password })
     window.localStorage.setItem(TOKEN, res.data.token)
     dispatch(me())
   } catch (authError) {
-    return dispatch(setAuth({error: authError}))
+    return dispatch(setAuth({ error: authError }))
   }
 }
 
@@ -50,10 +53,11 @@ export const logout = () => {
 /**
  * REDUCER
  */
-export default function(state = {}, action) {
+export default function (state = {}, action) {
   switch (action.type) {
     case SET_AUTH:
-      return action.auth
+      const { id, username } = action.auth
+      return { id, username }
     default:
       return state
   }

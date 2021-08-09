@@ -1,5 +1,5 @@
 import React from "react";
-import { addProductToCart } from '../store/products'
+import { addToCart } from '../store/cart'
 import { connect } from 'react-redux'
 
 class AddProdToCart extends React.Component {
@@ -11,8 +11,9 @@ class AddProdToCart extends React.Component {
 
   handleClick() {
     if (this.props.auth.id) {
-      this.props.addProductToCart(this.props.product.id, this.props.auth.id)
-      this.props.fetchProducts()
+      console.log("this.props.auth.id in handleClick", this.props.auth.id); //my code
+      this.props.addToCart(this.props.product.id, this.props.auth.id)
+
       console.log("Added to user cart!");
     } else {
       const product = this.props.product;
@@ -45,7 +46,7 @@ class AddProdToCart extends React.Component {
 
 const mapDispatch = (dispatch) => {
   return {
-    addProductToCart: (productId, userId) => dispatch(addProductToCart(productId, userId))
+    addToCart: (productId, userId) => dispatch(addToCart(productId, userId))
 
   }
 }

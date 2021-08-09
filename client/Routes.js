@@ -8,6 +8,8 @@ import Products from './components/Products'
 import SingleProduct from './components/SingleProduct';
 import Cart from './components/Cart'
 import Info from './components/Info'
+import Checkout from './components/Checkout'
+import Confirmation from './components/Confirmation'
 
 /**
  * COMPONENT
@@ -35,8 +37,11 @@ class Routes extends Component {
         )}
         <Route exact path="/products" component={Products} />
         <Route path="/products/:id" component={SingleProduct} />
-        <Route path="/cart" component={Cart} />
+        <Route exact path="/cart" component={Cart} />
+        <Route exact path="/cart/checkout" component={Checkout} />
+        <Route exact path="/cart/confirmation" component={Confirmation} />
         <Route path="/info" component={Info} />
+
       </div>
     )
   }

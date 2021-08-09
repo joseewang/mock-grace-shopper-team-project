@@ -17,6 +17,14 @@ const User = db.define('user', {
   },
   password: {
     type: Sequelize.STRING,
+  },
+  userType: {
+    type: Sequelize.STRING,
+    allowNull: false,
+    defaultValue: 'CUSTOMER',
+    validate: {
+      isIn: [['CUSTOMER', 'ADMINISTRATOR']],
+    }
   }
 })
 

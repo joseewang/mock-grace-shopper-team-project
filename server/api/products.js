@@ -1,35 +1,35 @@
-const router = require('express').Router();
-const { models: { User, Product, Sale, SaleItem }} = require('../db');
-module.exports = router;
+const router = require('express').Router()
+const { models: { User, Product, SaleItem, Sale } } = require('../db')
+module.exports = router
 
-//GET api/products
 router.get('/', async (req, res, next) => {
   try {
-    const products = await Product.findAll();
-    res.json(products);
-  } catch (error) {
-    next(error);
+    const products = await Product.findAll()
+    res.json(products)
+  } catch (err) {
+    next(err)
   }
-});
+})
 
-//GET api/products/:id
 router.get('/:id', async (req, res, next) => {
   try {
-   const product = await Product.findByPk(req.params.id);
-   res.json(product); 
-  } catch (error) {
-    next(error);
+    const product = await Product.findByPk(req.params.id)
+    res.json(product)
+  } catch (err) {
+    next(err)
   }
-});
+})
 
-//PUT /api/products/:productId/users/:userId
+// PUT /api/products/:productId/users/:userId
 router.put('/:productId/users/:userId', async (req, res, next) => {
   try {
-    //get user by userId & get product by productId
+    // Get the user
     const user = await User.findByPk(req.params.userId);
-    const product = await Product.findByPk(req.params.productId);
 
-    //get false isPurchased order (aka current cart items)
+    // Get the product
+    const product = await Product.findByPk(req.params.productId)
+
+    // Get current cart
     let currCart = await Sale.findOne({
       where: {
         userId: user.id,
@@ -40,27 +40,17 @@ router.put('/:productId/users/:userId', async (req, res, next) => {
       ]
     })
 
-    //if no false isPurchased order exists--create new order
-    if(!currCart) {
-      //step 1: create the order
-      await Sale.create({ isPurchased: false, userId: user.id })
-
-      //step 2: retrieve the order
-      currCart = await Sale.findOne({
-        where: {
-          userId: user.id,
-          isPurchased: false,
-        },
-      })
-
-      //step 3: add "clicked" product to new order
+    // If the user doesn't have a current cart, create one
+    if (!currCart) {
+      // Create a cart and associate it with the user
+      currCart = await Sale.create({ isPurchased: false, userId: user.id })
+      // Add the product to that cart
       await currCart.addProduct(product)
-    } else  //if false isPurchased order exists--retrieve order
+    }
+    else // If there is a current cart
     {
-      //step 1: retrieve all products in order
       const cartItemIds = currCart.products.map(product => product.id)
-
-      //step2: check if "clicked" product is in the order
+      // Check if the product is in the cart
       if (currCart.products && cartItemIds.includes(product.id)) {
         const currSaleItem = await SaleItem.findOne({
           where: {
@@ -68,15 +58,15 @@ router.put('/:productId/users/:userId', async (req, res, next) => {
             productId: product.id
           }
         })
-
-        //increment orderQty if "clicked" product exists
         await currSaleItem.update({ quantity: currSaleItem.quantity + 1 })
-      } else //add "clicked" product to order if it doesn't exist in this order
-      {
+      }
+      else {
+        // Associate the product to the sale instance
         await currCart.addProduct(product)
-      };
-    };
-  } catch(error) {
-    next(error);
-  };
-});
+      }
+    }
+    res.sendStatus(204)
+  } catch (err) {
+    next(err)
+  }
+})
