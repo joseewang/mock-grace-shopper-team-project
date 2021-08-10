@@ -1,6 +1,9 @@
 import React from "react";
+import { addProductToCart } from '../store/products'
+import { connect } from 'react-redux';
+import Button from '@material-ui/core/Button';
+import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import { addToCart } from '../store/cart'
-import { connect } from 'react-redux'
 
 class AddProdToCart extends React.Component {
   constructor(props) {
@@ -11,7 +14,6 @@ class AddProdToCart extends React.Component {
 
   handleClick() {
     if (this.props.auth.id) {
-      console.log("this.props.auth.id in handleClick", this.props.auth.id); //my code
       this.props.addToCart(this.props.product.id, this.props.auth.id)
 
       console.log("Added to user cart!");
@@ -37,9 +39,9 @@ class AddProdToCart extends React.Component {
   render() {
 
     return (
-      <button type="button" onClick={this.handleClick}>
+      <Button type="button" variant="contained" endIcon={<ShoppingCartIcon />} onClick={this.handleClick}>
         Add To Cart
-      </button>
+      </Button>
     )
   }
 }

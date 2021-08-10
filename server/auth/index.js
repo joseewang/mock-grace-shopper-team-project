@@ -1,5 +1,6 @@
 const router = require('express').Router()
-const { models: { User, Sale, Product } } = require('../db')
+const { models: { User, Sale, Product } } = require('../db');
+const { requireToken } = require('../api/gatekeepingMiddleware');
 module.exports = router
 
 router.post('/login', async (req, res, next) => {
@@ -10,10 +11,11 @@ router.post('/login', async (req, res, next) => {
   }
 })
 
-
+// POST /auth/signup
 router.post('/signup', async (req, res, next) => {
   try {
-    const user = await User.create(req.body)
+    const { username, password } = req.body
+    const user = await User.create({ username, password })
     res.send({ token: await user.generateToken() })
   } catch (err) {
     if (err.name === 'SequelizeUniqueConstraintError') {
@@ -24,9 +26,10 @@ router.post('/signup', async (req, res, next) => {
   }
 })
 
-router.get('/me', async (req, res, next) => {
+// GET /auth/me
+router.get('/me', requireToken, async (req, res, next) => {
   try {
-    const user = await User.findByToken(req.headers.authorization)
+    const user = req.user;
     const cart = await Sale.findOne({
       where: {
         userId: user.id,

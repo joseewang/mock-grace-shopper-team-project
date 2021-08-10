@@ -9,7 +9,8 @@ class Confirmation extends React.Component {
   }
 
   render () {
-    // console.log('what is confirmation this.props', this.props);
+    console.log('confirmation page this.props', this.props);
+    
     return(
       <div>
         <h1>Thank you for your order</h1>
@@ -28,5 +29,3 @@ class Confirmation extends React.Component {
 }
 
 export default connect()(Confirmation);
-
-// export default Confirmation;

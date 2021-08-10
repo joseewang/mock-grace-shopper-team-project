@@ -10,22 +10,15 @@ const User = db.define('user', {
   username: {
     type: Sequelize.STRING,
     unique: true,
-    allowNull: false,
-    validate: {
-      isEmail: true,
-    }
+    allowNull: false
   },
   password: {
     type: Sequelize.STRING,
   },
-  userType: {
-    type: Sequelize.STRING,
-    allowNull: false,
-    defaultValue: 'CUSTOMER',
-    validate: {
-      isIn: [['CUSTOMER', 'ADMINISTRATOR']],
-    }
-  }
+  isAdmin: {
+    type: Sequelize.BOOLEAN,
+    defaultValue: false
+  },
 })
 
 module.exports = User
